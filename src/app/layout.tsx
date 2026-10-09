@@ -18,56 +18,87 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-slate-50 text-slate-900 flex h-screen overflow-hidden`}>
-        {/* Sidebar */}
-        <aside className="w-72 bg-slate-900 text-slate-300 flex-shrink-0 h-full flex flex-col overflow-y-auto">
-          <div className="p-6 border-b border-slate-800">
-            <Link href="/" className="flex items-center gap-3 text-white hover:text-blue-400 transition-colors">
-              <Brain className="w-8 h-8 text-blue-500" />
-              <div>
-                <h1 className="text-xl font-bold">AI Handbook</h1>
-                <p className="text-xs text-slate-400">Zero to AI Engineer</p>
+      {/* 
+        The body represents the "Mac Desktop" background. 
+        Using a nice, subtle macOS-like blurred gradient wallpaper effect.
+      */}
+      <body className={`${inter.className} bg-gradient-to-br from-indigo-300 via-purple-300 to-pink-300 text-slate-900 flex h-screen w-screen items-center justify-center p-4 sm:p-8 overflow-hidden`}>
+        
+        {/* The macOS Window Container */}
+        <div className="w-full h-full max-w-7xl max-h-[900px] flex flex-col bg-white rounded-xl shadow-2xl overflow-hidden ring-1 ring-slate-900/10">
+          
+          {/* macOS Title Bar */}
+          <div className="h-12 bg-slate-100 border-b border-slate-200 flex items-center px-4 shrink-0 justify-between select-none">
+            {/* Traffic Lights */}
+            <div className="flex space-x-2 w-20">
+              <div className="w-3.5 h-3.5 rounded-full bg-red-500 border border-red-600 shadow-inner"></div>
+              <div className="w-3.5 h-3.5 rounded-full bg-amber-500 border border-amber-600 shadow-inner"></div>
+              <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-emerald-600 shadow-inner"></div>
+            </div>
+            {/* Window Title */}
+            <div className="text-sm font-semibold text-slate-600 cursor-default flex-1 text-center pr-20">
+              AI Engineer's Handbook
+            </div>
+          </div>
+
+          {/* Window Content */}
+          <div className="flex flex-1 overflow-hidden">
+            
+            {/* macOS Sidebar (Translucent / Frosted Glass effect) */}
+            <aside className="w-64 bg-slate-50/80 backdrop-blur-xl border-r border-slate-200 flex-shrink-0 h-full flex flex-col overflow-y-auto">
+              <div className="p-6">
+                <Link href="/" className="flex items-center gap-3 text-slate-800 hover:text-blue-600 transition-colors">
+                  <div className="p-2 bg-blue-600 rounded-lg shadow-sm">
+                    <Brain className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg font-bold leading-tight">AI Handbook</h1>
+                    <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Zero to AI Engineer</p>
+                  </div>
+                </Link>
               </div>
-            </Link>
-          </div>
-          <nav className="p-4 space-y-2 flex-1">
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 mt-4">Core Foundations</div>
-            
-            <Link href="/ml" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-              <BookOpen className="w-5 h-5" />
-              <span className="font-medium">Classical ML</span>
-            </Link>
-            
-            <Link href="/evaluations" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-              <CheckSquare className="w-5 h-5" />
-              <span className="font-medium">Evaluations & Metrics</span>
-            </Link>
+              
+              <nav className="px-3 space-y-1 flex-1">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 mt-2 px-3">Core Foundations</div>
+                
+                <Link href="/ml" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-700 transition-colors">
+                  <BookOpen className="w-4 h-4 text-blue-500" />
+                  <span className="font-medium text-sm">Classical ML</span>
+                </Link>
+                
+                <Link href="/evaluations" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-700 transition-colors">
+                  <CheckSquare className="w-4 h-4 text-emerald-500" />
+                  <span className="font-medium text-sm">Evaluations</span>
+                </Link>
 
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 mt-8">Advanced Models</div>
-            
-            <Link href="/deep-learning" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-              <Network className="w-5 h-5" />
-              <span className="font-medium">Deep Learning</span>
-            </Link>
-            
-            <Link href="/search-models" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-              <Search className="w-5 h-5" />
-              <span className="font-medium">Search & Game Theory</span>
-            </Link>
-            
-            <Link href="/llm-rag" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-              <MessageSquare className="w-5 h-5" />
-              <span className="font-medium">LLMs, LangChain & RAG</span>
-            </Link>
-          </nav>
-        </aside>
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 mt-6 px-3">Advanced Models</div>
+                
+                <Link href="/deep-learning" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-700 transition-colors">
+                  <Network className="w-4 h-4 text-purple-500" />
+                  <span className="font-medium text-sm">Deep Learning</span>
+                </Link>
+                
+                <Link href="/search-models" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-700 transition-colors">
+                  <Search className="w-4 h-4 text-amber-500" />
+                  <span className="font-medium text-sm">Game Theory</span>
+                </Link>
+                
+                <Link href="/llm-rag" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-700 transition-colors">
+                  <MessageSquare className="w-4 h-4 text-indigo-500" />
+                  <span className="font-medium text-sm">LLMs & RAG</span>
+                </Link>
+              </nav>
+            </aside>
 
-        {/* Main Content Area */}
-        <main className="flex-1 h-full overflow-y-auto bg-slate-50">
-          <div className="max-w-5xl mx-auto p-8 lg:p-12">
-            {children}
+            {/* Main Content Area */}
+            <main className="flex-1 h-full overflow-y-auto bg-white">
+              <div className="max-w-4xl mx-auto p-8 lg:p-12">
+                {children}
+              </div>
+            </main>
+
           </div>
-        </main>
+        </div>
       </body>
     </html>
   );

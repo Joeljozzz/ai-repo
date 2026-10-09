@@ -1,5 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Removed the default dark mode auto-inversion that was causing the white-on-white text */
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background-color: #f1f5f9; /* Tailwind slate-100 fallback */
+}
