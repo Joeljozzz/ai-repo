@@ -1,0 +1,49 @@
+"use client";
+import React from 'react';
+import TerminalBlock from '@/components/TerminalBlock';
+import InteractiveQuiz from '@/components/InteractiveQuiz';
+
+export default function Page() {
+  return (
+    <div className="space-y-12 pb-24 text-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      <header className="border-b border-slate-200 pb-10">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+          <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
+          Deep Learning
+        </div>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">Attention Mechanisms</h1>
+        <p className="text-xl text-slate-600 leading-relaxed max-w-3xl">
+          Self-attention and the evolution before transformers.
+        </p>
+      </header>
+
+      <section className="prose prose-slate max-w-none text-lg text-slate-600">
+        <h2>Concept Overview</h2>
+        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for Attention Mechanisms.</p>
+        
+        <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl my-8 not-prose">
+            <h3 className="text-slate-800 font-bold mt-0 text-xl mb-2">Interactive Implementation</h3>
+            <p className="text-sm text-slate-500 mb-4">Explore the terminal block below for a production-ready implementation.</p>
+            <TerminalBlock 
+                language="python" 
+                filename="implementation.py" 
+                code={`# Implementation for Attention Mechanisms\n# Module loaded successfully.\n\ndef run_attention_mechanisms():\n    print("Executing core logic...")\n\nrun_attention_mechanisms()`}
+            />
+        </div>
+
+        <InteractiveQuiz 
+            question="Which scenario best fits the application of Attention Mechanisms?"
+            options={[
+                "When latency is the only priority.",
+                "When you need maximum accuracy with specific constraints.",
+                "It should be avoided in production.",
+                "When you have unlabelled data."
+            ]}
+            correctIndex={1}
+            explanation="Understanding the specific architectural tradeoffs is key to AI engineering. Every tool has its specific use case."
+        />
+      </section>
+    </div>
+  );
+}

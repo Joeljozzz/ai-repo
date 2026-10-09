@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import { BookOpen, Brain, Network, Search, CheckSquare, MessageSquare, ChevronRight } from "lucide-react";
+import { BookOpen, Brain, Network, Search, CheckSquare, MessageSquare } from "lucide-react";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -32,14 +32,14 @@ export default function RootLayout({
               <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-emerald-600 shadow-inner"></div>
             </div>
             <div className="text-sm font-semibold text-slate-600 cursor-default flex-1 text-center pr-20">
-              AI Engineer's Handbook
+              Interactive AI Curriculum
             </div>
           </div>
 
           {/* Window Content */}
           <div className="flex flex-1 overflow-hidden">
             
-            {/* macOS Sidebar (Translucent / Frosted Glass effect) */}
+            {/* macOS Sidebar */}
             <aside className="w-72 bg-slate-50/90 backdrop-blur-xl border-r border-slate-200 flex-shrink-0 h-full flex flex-col overflow-y-auto pb-8 custom-scrollbar">
               <div className="p-6 sticky top-0 bg-slate-50/90 backdrop-blur-xl z-10 border-b border-slate-200/50 mb-4">
                 <Link href="/" className="flex items-center gap-3 text-slate-800 hover:text-blue-600 transition-colors">
@@ -47,7 +47,7 @@ export default function RootLayout({
                     <Brain className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-lg font-bold leading-tight">AI Handbook</h1>
+                    <h1 className="text-lg font-bold leading-tight">AI Academy</h1>
                     <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Zero to AI Engineer</p>
                   </div>
                 </Link>
@@ -55,71 +55,59 @@ export default function RootLayout({
               
               <nav className="px-4 space-y-6 flex-1">
                 
-                {/* Section 1 */}
+                {/* Stack 1: Classical ML */}
                 <div>
-                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">Core Foundations</div>
-                  
-                  <div className="space-y-1">
-                    <Link href="/ml" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-800 font-medium transition-colors">
-                      <BookOpen className="w-4 h-4 text-blue-500" />
-                      <span className="text-sm">Classical ML</span>
-                    </Link>
-                    {/* Nested Links */}
-                    <div className="pl-10 space-y-1 border-l-2 border-slate-200 ml-4 mt-1">
-                      <Link href="/ml#linear" className="block text-xs text-slate-500 hover:text-blue-600 py-1">Linear & Distance Models</Link>
-                      <Link href="/ml#svm" className="block text-xs text-slate-500 hover:text-blue-600 py-1">Support Vector Machines</Link>
-                      <Link href="/ml#trees" className="block text-xs text-slate-500 hover:text-blue-600 py-1">Decision Trees</Link>
-                      <Link href="/ml#ensembles" className="block text-xs text-slate-500 hover:text-blue-600 py-1">Bagging & Boosting</Link>
-                    </div>
+                  <div className="flex items-center gap-2 mb-2 px-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <BookOpen className="w-4 h-4 text-emerald-500" />
+                    <span>Stack 1: Classical ML</span>
                   </div>
-
-                  <div className="space-y-1 mt-2">
-                    <Link href="/evaluations" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-800 font-medium transition-colors">
-                      <CheckSquare className="w-4 h-4 text-emerald-500" />
-                      <span className="text-sm">Evaluations</span>
-                    </Link>
+                  <div className="pl-6 space-y-1 border-l-2 border-emerald-100 ml-4 mt-1">
+                    <Link href="/course/ml/linear-models" className="block text-[13px] text-slate-600 hover:text-emerald-600 font-medium py-1.5 px-2 rounded-md hover:bg-emerald-50 transition-colors">1.1 Linear & Distance Models</Link>
+                    <Link href="/course/ml/svm" className="block text-[13px] text-slate-600 hover:text-emerald-600 font-medium py-1.5 px-2 rounded-md hover:bg-emerald-50 transition-colors">1.2 Support Vector Machines</Link>
+                    <Link href="/course/ml/trees" className="block text-[13px] text-slate-600 hover:text-emerald-600 font-medium py-1.5 px-2 rounded-md hover:bg-emerald-50 transition-colors">1.3 Decision Trees</Link>
+                    <Link href="/course/ml/ensembles" className="block text-[13px] text-slate-600 hover:text-emerald-600 font-medium py-1.5 px-2 rounded-md hover:bg-emerald-50 transition-colors">1.4 Bagging & Boosting</Link>
                   </div>
                 </div>
 
-                {/* Section 2 */}
+                {/* Stack 2: Deep Learning */}
                 <div>
-                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">Advanced Models</div>
-                  
-                  <div className="space-y-1">
-                    <Link href="/deep-learning" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-800 font-medium transition-colors">
-                      <Network className="w-4 h-4 text-purple-500" />
-                      <span className="text-sm">Deep Learning</span>
-                    </Link>
-                    <div className="pl-10 space-y-1 border-l-2 border-slate-200 ml-4 mt-1">
-                      <Link href="/deep-learning#mlp" className="block text-xs text-slate-500 hover:text-purple-600 py-1">Theory & Math (MLP)</Link>
-                      <Link href="/deep-learning#cnn" className="block text-xs text-slate-500 hover:text-purple-600 py-1">CNNs (Vision)</Link>
-                      <Link href="/deep-learning#rnn" className="block text-xs text-slate-500 hover:text-purple-600 py-1">RNNs & LSTMs</Link>
-                    </div>
+                  <div className="flex items-center gap-2 mb-2 px-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <Network className="w-4 h-4 text-purple-500" />
+                    <span>Stack 2: Deep Learning</span>
                   </div>
-
-                  <div className="space-y-1 mt-2">
-                    <Link href="/search-models" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-800 font-medium transition-colors">
-                      <Search className="w-4 h-4 text-amber-500" />
-                      <span className="text-sm">Search & Game Theory</span>
-                    </Link>
+                  <div className="pl-6 space-y-1 border-l-2 border-purple-100 ml-4 mt-1">
+                    <Link href="/course/dl/foundations" className="block text-[13px] text-slate-600 hover:text-purple-600 font-medium py-1.5 px-2 rounded-md hover:bg-purple-50 transition-colors">2.1 MLP Foundations</Link>
+                    <Link href="/course/dl/cnn" className="block text-[13px] text-slate-600 hover:text-purple-600 font-medium py-1.5 px-2 rounded-md hover:bg-purple-50 transition-colors">2.2 Computer Vision (CNN)</Link>
+                    <Link href="/course/dl/rnn" className="block text-[13px] text-slate-600 hover:text-purple-600 font-medium py-1.5 px-2 rounded-md hover:bg-purple-50 transition-colors">2.3 Sequence Modeling</Link>
+                    <Link href="/course/dl/attention" className="block text-[13px] text-slate-600 hover:text-purple-600 font-medium py-1.5 px-2 rounded-md hover:bg-purple-50 transition-colors">2.4 Attention Mechanisms</Link>
                   </div>
                 </div>
 
-                {/* Section 3 */}
+                {/* Stack 3: LLMs */}
                 <div>
-                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">Generative AI</div>
-                  
-                  <div className="space-y-1">
-                    <Link href="/llm-rag" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200/50 text-slate-800 font-medium transition-colors">
-                      <MessageSquare className="w-4 h-4 text-indigo-500" />
-                      <span className="text-sm">LLMs & RAG</span>
-                    </Link>
-                    <div className="pl-10 space-y-1 border-l-2 border-slate-200 ml-4 mt-1">
-                      <Link href="/llm-rag#foundations" className="block text-xs text-slate-500 hover:text-indigo-600 py-1">Transformers & LLMs</Link>
-                      <Link href="/llm-rag#rag" className="block text-xs text-slate-500 hover:text-indigo-600 py-1">Advanced RAG</Link>
-                      <Link href="/llm-rag#agents" className="block text-xs text-slate-500 hover:text-indigo-600 py-1">Agentic Workflows</Link>
-                      <Link href="/llm-rag#langgraph" className="block text-xs text-slate-500 hover:text-indigo-600 py-1">LangGraph & Multi-Agent</Link>
-                    </div>
+                  <div className="flex items-center gap-2 mb-2 px-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <MessageSquare className="w-4 h-4 text-indigo-500" />
+                    <span>Stack 3: LLMs & GenAI</span>
+                  </div>
+                  <div className="pl-6 space-y-1 border-l-2 border-indigo-100 ml-4 mt-1">
+                    <Link href="/course/llm/transformers" className="block text-[13px] text-slate-600 hover:text-indigo-600 font-medium py-1.5 px-2 rounded-md hover:bg-indigo-50 transition-colors">3.1 Transformers Architecture</Link>
+                    <Link href="/course/llm/fine-tuning" className="block text-[13px] text-slate-600 hover:text-indigo-600 font-medium py-1.5 px-2 rounded-md hover:bg-indigo-50 transition-colors">3.2 LoRA & Fine-Tuning</Link>
+                    <Link href="/course/llm/rag" className="block text-[13px] text-slate-600 hover:text-indigo-600 font-medium py-1.5 px-2 rounded-md hover:bg-indigo-50 transition-colors">3.3 Advanced RAG</Link>
+                    <Link href="/course/llm/agents" className="block text-[13px] text-slate-600 hover:text-indigo-600 font-medium py-1.5 px-2 rounded-md hover:bg-indigo-50 transition-colors">3.4 Agentic Frameworks</Link>
+                    <Link href="/course/llm/multi-agent" className="block text-[13px] text-slate-600 hover:text-indigo-600 font-medium py-1.5 px-2 rounded-md hover:bg-indigo-50 transition-colors">3.5 LangGraph Multi-Agent</Link>
+                  </div>
+                </div>
+
+                {/* Stack 4: MLOps */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2 px-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <CheckSquare className="w-4 h-4 text-rose-500" />
+                    <span>Stack 4: MLOps & Evals</span>
+                  </div>
+                  <div className="pl-6 space-y-1 border-l-2 border-rose-100 ml-4 mt-1">
+                    <Link href="/course/ops/metrics" className="block text-[13px] text-slate-600 hover:text-rose-600 font-medium py-1.5 px-2 rounded-md hover:bg-rose-50 transition-colors">4.1 Classification Metrics</Link>
+                    <Link href="/course/ops/llm-evals" className="block text-[13px] text-slate-600 hover:text-rose-600 font-medium py-1.5 px-2 rounded-md hover:bg-rose-50 transition-colors">4.2 LLM Evaluations</Link>
+                    <Link href="/course/ops/deployment" className="block text-[13px] text-slate-600 hover:text-rose-600 font-medium py-1.5 px-2 rounded-md hover:bg-rose-50 transition-colors">4.3 Serving & Scaling</Link>
                   </div>
                 </div>
 
@@ -127,7 +115,7 @@ export default function RootLayout({
             </aside>
 
             {/* Main Content Area */}
-            <main className="flex-1 h-full overflow-y-auto bg-white scroll-smooth custom-scrollbar">
+            <main className="flex-1 h-full overflow-y-auto bg-white scroll-smooth custom-scrollbar relative">
               <div className="max-w-4xl mx-auto p-8 lg:p-14">
                 {children}
               </div>
