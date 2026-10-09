@@ -10,17 +10,17 @@ export default function Page() {
       <header className="border-b border-slate-200 pb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
           <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
-          Deep Learning
+          Stack 3: Deep Learning
         </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">Computer Vision (CNN)</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">3.2 Computer Vision (CNN)</h1>
         <p className="text-xl text-slate-600 leading-relaxed max-w-3xl">
-          Convolutions, Pooling, and ResNets.
+          Cross-Correlation operators, Spatial Invariance, Pooling, and ResNet architectures.
         </p>
       </header>
 
       <section className="prose prose-slate max-w-none text-lg text-slate-600">
         <h2>Concept Overview</h2>
-        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for Computer Vision (CNN).</p>
+        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for 3.2 Computer Vision (CNN).</p>
         
         <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl my-8 not-prose">
             <h3 className="text-slate-800 font-bold mt-0 text-xl mb-2">Interactive Implementation</h3>
@@ -28,20 +28,20 @@ export default function Page() {
             <TerminalBlock 
                 language="python" 
                 filename="implementation.py" 
-                code={`# Implementation for Computer Vision (CNN)\n# Module loaded successfully.\n\ndef run_computer_vision__cnn_():\n    print("Executing core logic...")\n\nrun_computer_vision__cnn_()`}
+                code={`# PhD-level Implementation for 3.2 Computer Vision (CNN)\n# Module loaded successfully.\n\ndef run_3_2_computer_vision__cnn_():\n    print("Executing core logic...")\n\nrun_3_2_computer_vision__cnn_()`}
             />
         </div>
 
         <InteractiveQuiz 
-            question="Which scenario best fits the application of Computer Vision (CNN)?"
+            question="Which mathematical or architectural constraint best fits the application of 3.2 Computer Vision (CNN)?"
             options={[
-                "When latency is the only priority.",
-                "When you need maximum accuracy with specific constraints.",
-                "It should be avoided in production.",
-                "When you have unlabelled data."
+                "When minimizing variance is the absolute priority over bias.",
+                "When operating in a high-dimensional, non-linear geometric space.",
+                "It is strictly a heuristic without statistical grounding.",
+                "When data relies entirely on ordinal variables."
             ]}
             correctIndex={1}
-            explanation="Understanding the specific architectural tradeoffs is key to AI engineering. Every tool has its specific use case."
+            explanation="Understanding the specific architectural tradeoffs and mathematical bounds is key to PhD-level AI engineering."
         />
       </section>
     </div>

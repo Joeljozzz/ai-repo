@@ -1,10 +1,23 @@
-const fs = require('fs');
-const path = require('path');
+export type Module = {
+  id: string;
+  title: string;
+  desc: string;
+};
 
-const curriculum = [
+export type Stack = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+  modules: Module[];
+};
+
+export const curriculum: Stack[] = [
   {
     id: "stats",
     title: "Stack 0: Mathematics & Statistics",
+    description: "The rigorous mathematical foundation required for PhD-level AI research.",
     icon: "Calculator",
     color: "blue",
     modules: [
@@ -17,6 +30,7 @@ const curriculum = [
   {
     id: "ml-foundations",
     title: "Stack 1: ML Fundamentals",
+    description: "Core paradigms and problem formulations in machine learning.",
     icon: "Target",
     color: "emerald",
     modules: [
@@ -28,6 +42,7 @@ const curriculum = [
   {
     id: "ml",
     title: "Stack 2: Classical Machine Learning",
+    description: "Deep dive into statistical modeling, geometric boundaries, and algorithms.",
     icon: "BookOpen",
     color: "teal",
     modules: [
@@ -40,6 +55,7 @@ const curriculum = [
   {
     id: "dl",
     title: "Stack 3: Deep Learning",
+    description: "Neural Networks, representation learning, and high-dimensional calculus.",
     icon: "Network",
     color: "purple",
     modules: [
@@ -52,6 +68,7 @@ const curriculum = [
   {
     id: "llm",
     title: "Stack 4: Generative AI & LLMs",
+    description: "Modern Large Language Models, architectures, and fine-tuning.",
     icon: "MessageSquare",
     color: "indigo",
     modules: [
@@ -63,73 +80,3 @@ const curriculum = [
     ]
   }
 ];
-
-const baseDir = path.join(__dirname, "src/app/course");
-
-function generatePage(stackTitle, color, modTitle, modDesc) {
-    return `"use client";
-import React from 'react';
-import TerminalBlock from '@/components/TerminalBlock';
-import InteractiveQuiz from '@/components/InteractiveQuiz';
-
-export default function Page() {
-  return (
-    <div className="space-y-12 pb-24 text-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      
-      <header className="border-b border-slate-200 pb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-${color}-100 text-${color}-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-          <span className="w-2 h-2 rounded-full bg-${color}-600 animate-pulse"></span>
-          ${stackTitle}
-        </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">${modTitle}</h1>
-        <p className="text-xl text-slate-600 leading-relaxed max-w-3xl">
-          ${modDesc}
-        </p>
-      </header>
-
-      <section className="prose prose-slate max-w-none text-lg text-slate-600">
-        <h2>Concept Overview</h2>
-        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for ${modTitle}.</p>
-        
-        <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl my-8 not-prose">
-            <h3 className="text-slate-800 font-bold mt-0 text-xl mb-2">Interactive Implementation</h3>
-            <p className="text-sm text-slate-500 mb-4">Explore the terminal block below for a production-ready implementation.</p>
-            <TerminalBlock 
-                language="python" 
-                filename="implementation.py" 
-                code={\`# PhD-level Implementation for ${modTitle}\\n# Module loaded successfully.\\n\\ndef run_${modTitle.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}():\\n    print("Executing core logic...")\\n\\nrun_${modTitle.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}()\`}
-            />
-        </div>
-
-        <InteractiveQuiz 
-            question="Which mathematical or architectural constraint best fits the application of ${modTitle}?"
-            options={[
-                "When minimizing variance is the absolute priority over bias.",
-                "When operating in a high-dimensional, non-linear geometric space.",
-                "It is strictly a heuristic without statistical grounding.",
-                "When data relies entirely on ordinal variables."
-            ]}
-            correctIndex={1}
-            explanation="Understanding the specific architectural tradeoffs and mathematical bounds is key to PhD-level AI engineering."
-        />
-      </section>
-    </div>
-  );
-}
-`;
-}
-
-// Scaffold
-for (const stack of curriculum) {
-    for (const mod of stack.modules) {
-        const modDir = path.join(baseDir, stack.id, mod.id);
-        fs.mkdirSync(modDir, { recursive: true });
-        
-        const pagePath = path.join(modDir, "page.tsx");
-        const content = generatePage(stack.title, stack.color, mod.title, mod.desc);
-        
-        fs.writeFileSync(pagePath, content, "utf8");
-    }
-}
-
-console.log("Scaffolded all PhD-level course pages successfully!");

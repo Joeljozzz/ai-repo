@@ -10,17 +10,17 @@ export default function Page() {
       <header className="border-b border-slate-200 pb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
           <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
-          Generative AI & LLMs
+          Stack 4: Generative AI & LLMs
         </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">LoRA & Fine-Tuning</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">4.2 PEFT & LoRA</h1>
         <p className="text-xl text-slate-600 leading-relaxed max-w-3xl">
-          Parameter Efficient Fine Tuning (PEFT).
+          Low-Rank Adaptation, QLoRA, and gradient updates in frozen networks.
         </p>
       </header>
 
       <section className="prose prose-slate max-w-none text-lg text-slate-600">
         <h2>Concept Overview</h2>
-        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for LoRA & Fine-Tuning.</p>
+        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for 4.2 PEFT & LoRA.</p>
         
         <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl my-8 not-prose">
             <h3 className="text-slate-800 font-bold mt-0 text-xl mb-2">Interactive Implementation</h3>
@@ -28,20 +28,20 @@ export default function Page() {
             <TerminalBlock 
                 language="python" 
                 filename="implementation.py" 
-                code={`# Implementation for LoRA & Fine-Tuning\n# Module loaded successfully.\n\ndef run_lora___fine_tuning():\n    print("Executing core logic...")\n\nrun_lora___fine_tuning()`}
+                code={`# PhD-level Implementation for 4.2 PEFT & LoRA\n# Module loaded successfully.\n\ndef run_4_2_peft___lora():\n    print("Executing core logic...")\n\nrun_4_2_peft___lora()`}
             />
         </div>
 
         <InteractiveQuiz 
-            question="Which scenario best fits the application of LoRA & Fine-Tuning?"
+            question="Which mathematical or architectural constraint best fits the application of 4.2 PEFT & LoRA?"
             options={[
-                "When latency is the only priority.",
-                "When you need maximum accuracy with specific constraints.",
-                "It should be avoided in production.",
-                "When you have unlabelled data."
+                "When minimizing variance is the absolute priority over bias.",
+                "When operating in a high-dimensional, non-linear geometric space.",
+                "It is strictly a heuristic without statistical grounding.",
+                "When data relies entirely on ordinal variables."
             ]}
             correctIndex={1}
-            explanation="Understanding the specific architectural tradeoffs is key to AI engineering. Every tool has its specific use case."
+            explanation="Understanding the specific architectural tradeoffs and mathematical bounds is key to PhD-level AI engineering."
         />
       </section>
     </div>

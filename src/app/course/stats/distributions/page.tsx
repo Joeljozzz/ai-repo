@@ -8,19 +8,19 @@ export default function Page() {
     <div className="space-y-12 pb-24 text-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       <header className="border-b border-slate-200 pb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-          <span className="w-2 h-2 rounded-full bg-teal-600 animate-pulse"></span>
-          Stack 2: Classical Machine Learning
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+          <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+          Stack 0: Mathematics & Statistics
         </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">2.1 Linear & Distance Models</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">0.2 Probability Distributions</h1>
         <p className="text-xl text-slate-600 leading-relaxed max-w-3xl">
-          OLS derivations, Maximum Likelihood Estimation in Logistic Regression, Minkowski distance in KNN.
+          PDFs and PMFs. Normal, Binomial, Poisson, Gamma, and Beta distributions.
         </p>
       </header>
 
       <section className="prose prose-slate max-w-none text-lg text-slate-600">
         <h2>Concept Overview</h2>
-        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for 2.1 Linear & Distance Models.</p>
+        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for 0.2 Probability Distributions.</p>
         
         <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl my-8 not-prose">
             <h3 className="text-slate-800 font-bold mt-0 text-xl mb-2">Interactive Implementation</h3>
@@ -28,12 +28,12 @@ export default function Page() {
             <TerminalBlock 
                 language="python" 
                 filename="implementation.py" 
-                code={`# PhD-level Implementation for 2.1 Linear & Distance Models\n# Module loaded successfully.\n\ndef run_2_1_linear___distance_models():\n    print("Executing core logic...")\n\nrun_2_1_linear___distance_models()`}
+                code={`# PhD-level Implementation for 0.2 Probability Distributions\n# Module loaded successfully.\n\ndef run_0_2_probability_distributions():\n    print("Executing core logic...")\n\nrun_0_2_probability_distributions()`}
             />
         </div>
 
         <InteractiveQuiz 
-            question="Which mathematical or architectural constraint best fits the application of 2.1 Linear & Distance Models?"
+            question="Which mathematical or architectural constraint best fits the application of 0.2 Probability Distributions?"
             options={[
                 "When minimizing variance is the absolute priority over bias.",
                 "When operating in a high-dimensional, non-linear geometric space.",

@@ -8,19 +8,19 @@ export default function Page() {
     <div className="space-y-12 pb-24 text-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       <header className="border-b border-slate-200 pb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-          <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-          Classical Machine Learning
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+          <span className="w-2 h-2 rounded-full bg-teal-600 animate-pulse"></span>
+          Stack 2: Classical Machine Learning
         </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">Decision Trees</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">2.3 Decision Trees</h1>
         <p className="text-xl text-slate-600 leading-relaxed max-w-3xl">
-          Gini, Entropy, and Information Gain.
+          Information Theory: Shannon Entropy, Gini Impurity, and CART split optimization.
         </p>
       </header>
 
       <section className="prose prose-slate max-w-none text-lg text-slate-600">
         <h2>Concept Overview</h2>
-        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for Decision Trees.</p>
+        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for 2.3 Decision Trees.</p>
         
         <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl my-8 not-prose">
             <h3 className="text-slate-800 font-bold mt-0 text-xl mb-2">Interactive Implementation</h3>
@@ -28,20 +28,20 @@ export default function Page() {
             <TerminalBlock 
                 language="python" 
                 filename="implementation.py" 
-                code={`# Implementation for Decision Trees\n# Module loaded successfully.\n\ndef run_decision_trees():\n    print("Executing core logic...")\n\nrun_decision_trees()`}
+                code={`# PhD-level Implementation for 2.3 Decision Trees\n# Module loaded successfully.\n\ndef run_2_3_decision_trees():\n    print("Executing core logic...")\n\nrun_2_3_decision_trees()`}
             />
         </div>
 
         <InteractiveQuiz 
-            question="Which scenario best fits the application of Decision Trees?"
+            question="Which mathematical or architectural constraint best fits the application of 2.3 Decision Trees?"
             options={[
-                "When latency is the only priority.",
-                "When you need maximum accuracy with specific constraints.",
-                "It should be avoided in production.",
-                "When you have unlabelled data."
+                "When minimizing variance is the absolute priority over bias.",
+                "When operating in a high-dimensional, non-linear geometric space.",
+                "It is strictly a heuristic without statistical grounding.",
+                "When data relies entirely on ordinal variables."
             ]}
             correctIndex={1}
-            explanation="Understanding the specific architectural tradeoffs is key to AI engineering. Every tool has its specific use case."
+            explanation="Understanding the specific architectural tradeoffs and mathematical bounds is key to PhD-level AI engineering."
         />
       </section>
     </div>
