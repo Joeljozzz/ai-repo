@@ -1,135 +1,69 @@
 const fs = require('fs');
 const path = require('path');
 
+// Must mirror src/data/curriculum.ts
 const curriculum = [
-  {
-    id: "stats",
-    title: "Stack 0: Mathematics & Statistics",
-    icon: "Calculator",
-    color: "blue",
-    modules: [
-      { id: "descriptive", title: "0.1 Descriptive Statistics", desc: "Moments of a distribution: Mean, Median, Mode, Variance, Kurtosis, Skewness, and Box Plot analytics." },
-      { id: "distributions", title: "0.2 Probability Distributions", desc: "PDFs and PMFs. Normal, Binomial, Poisson, Gamma, and Beta distributions." },
-      { id: "hypothesis", title: "0.3 Hypothesis Testing", desc: "Z-Test, T-Test (Student's), ANOVA (Analysis of Variance), and Chi-Square." },
-      { id: "errors", title: "0.4 Statistical Errors", desc: "Type I (False Positive), Type II (False Negative), Statistical Power, and p-value mathematics." }
-    ]
-  },
-  {
-    id: "ml-foundations",
-    title: "Stack 1: ML Fundamentals",
-    icon: "Target",
-    color: "emerald",
-    modules: [
-      { id: "paradigms", title: "1.1 Learning Paradigms", desc: "Mathematical distinctions between Supervised, Unsupervised, Semi-Supervised, and Reinforcement Learning." },
-      { id: "problem-types", title: "1.2 Problem Formulations", desc: "Classification (Discrete space) vs Regression (Continuous space) vs Clustering." },
-      { id: "evaluation", title: "1.3 Evaluation & Metrics", desc: "Confusion Matrix derivation, F1-Score (Harmonic Mean), ROC-AUC space, and Log-Loss bounds." }
-    ]
-  },
-  {
-    id: "ml",
-    title: "Stack 2: Classical Machine Learning",
-    icon: "BookOpen",
-    color: "teal",
-    modules: [
-      { id: "linear-models", title: "2.1 Linear & Distance Models", desc: "OLS derivations, Maximum Likelihood Estimation in Logistic Regression, Minkowski distance in KNN." },
-      { id: "svm", title: "2.2 Support Vector Machines", desc: "Lagrange Multipliers, Margin Maximization, Mercer's Theorem, and the Kernel Trick (RBF/Poly)." },
-      { id: "trees", title: "2.3 Decision Trees", desc: "Information Theory: Shannon Entropy, Gini Impurity, and CART split optimization." },
-      { id: "ensembles", title: "2.4 Bagging & Boosting", desc: "Bias-Variance Tradeoff. Random Forests (Bootstrap Aggregation), AdaBoost, and XGBoost (Gradient Boosting)." }
-    ]
-  },
-  {
-    id: "dl",
-    title: "Stack 3: Deep Learning",
-    icon: "Network",
-    color: "purple",
-    modules: [
-      { id: "foundations", title: "3.1 MLP & Calculus", desc: "Universal Approximation Theorem, Chain Rule in Backpropagation, and Activation Jacobians." },
-      { id: "cnn", title: "3.2 Computer Vision (CNN)", desc: "Cross-Correlation operators, Spatial Invariance, Pooling, and ResNet architectures." },
-      { id: "rnn", title: "3.3 Sequence Modeling", desc: "BPTT (Backprop Through Time), Vanishing Gradients, and LSTM/GRU Gating Mathematics." },
-      { id: "attention", title: "3.4 Attention Mechanisms", desc: "Seq2Seq models, Query-Key-Value matrices, and scaled dot-product attention." }
-    ]
-  },
-  {
-    id: "llm",
-    title: "Stack 4: Generative AI & LLMs",
-    icon: "MessageSquare",
-    color: "indigo",
-    modules: [
-      { id: "transformers", title: "4.1 Transformers Architecture", desc: "Multi-Head Attention, Positional Encodings, and Masked Language Modeling." },
-      { id: "fine-tuning", title: "4.2 PEFT & LoRA", desc: "Low-Rank Adaptation, QLoRA, and gradient updates in frozen networks." },
-      { id: "rag", title: "4.3 Advanced RAG", desc: "High-dimensional Vector Databases, HNSW indexing, and Cross-Encoder Re-ranking." },
-      { id: "agents", title: "4.4 Agentic Frameworks", desc: "ReAct loop reasoning, Tool/Function Calling schemas, and LangChain." },
-      { id: "multi-agent", title: "4.5 Multi-Agent Systems", desc: "Cyclic directed graphs, LangGraph, and specialized autonomous agents." }
-    ]
-  }
+  { id: "math",          color: "sky",     label: "Track 0", title: "Mathematical Foundations",       modules: [
+    { id: "descriptive-stats" },{ id: "probability" },{ id: "distributions" },
+    { id: "linear-algebra" },  { id: "calculus" },   { id: "hypothesis-testing" },{ id: "statistical-errors" },
+  ]},
+  { id: "ml-core",       color: "emerald", label: "Track 1", title: "Classical Machine Learning",      modules: [
+    { id: "learning-paradigms" },{ id: "data-preprocessing" },{ id: "model-evaluation" },
+    { id: "linear-regression" },{ id: "logistic-regression" },{ id: "knn" },{ id: "naive-bayes" },
+    { id: "svm" },{ id: "decision-trees" },{ id: "random-forests" },
+    { id: "boosting" },{ id: "xgboost" },{ id: "clustering" },{ id: "dim-reduction" },
+  ]},
+  { id: "deep-learning", color: "purple",  label: "Track 2", title: "Deep Learning",                  modules: [
+    { id: "neural-networks" },{ id: "backpropagation" },{ id: "optimizers" },{ id: "regularization" },
+    { id: "cnn" },{ id: "rnn-lstm" },{ id: "attention" },{ id: "transformers" },
+  ]},
+  { id: "genai",         color: "indigo",  label: "Track 3", title: "Generative AI & LLMs",           modules: [
+    { id: "llm-foundations" },{ id: "prompt-engineering" },{ id: "fine-tuning" },{ id: "embeddings" },
+  ]},
+  { id: "ai-systems",    color: "teal",    label: "Track 4", title: "AI Systems & RAG Engineering",   modules: [
+    { id: "rag-fundamentals" },{ id: "vector-databases" },{ id: "advanced-rag" },{ id: "evaluation-rag" },
+  ]},
+  { id: "agents",        color: "rose",    label: "Track 5", title: "Agentic AI & Orchestration",     modules: [
+    { id: "agent-fundamentals" },{ id: "react-pattern" },{ id: "memory-systems" },
+    { id: "langchain" },{ id: "langgraph" },{ id: "multi-agent" },{ id: "production-agents" },
+  ]},
 ];
 
-const baseDir = path.join(__dirname, "src/app/course");
-
-function generatePage(stackTitle, color, modTitle, modDesc) {
-    return `"use client";
+const COMING_SOON_TEMPLATE = (stackTitle, color, modId) => `"use client";
 import React from 'react';
-import TerminalBlock from '@/components/TerminalBlock';
-import InteractiveQuiz from '@/components/InteractiveQuiz';
 
 export default function Page() {
   return (
-    <div className="space-y-12 pb-24 text-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      
-      <header className="border-b border-slate-200 pb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-${color}-100 text-${color}-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-          <span className="w-2 h-2 rounded-full bg-${color}-600 animate-pulse"></span>
-          ${stackTitle}
-        </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-6">${modTitle}</h1>
-        <p className="text-xl text-slate-600 leading-relaxed max-w-3xl">
-          ${modDesc}
-        </p>
-      </header>
-
-      <section className="prose prose-slate max-w-none text-lg text-slate-600">
-        <h2>Concept Overview</h2>
-        <p>This interactive module covers the core concepts, mathematical foundations, and implementation details for ${modTitle}.</p>
-        
-        <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl my-8 not-prose">
-            <h3 className="text-slate-800 font-bold mt-0 text-xl mb-2">Interactive Implementation</h3>
-            <p className="text-sm text-slate-500 mb-4">Explore the terminal block below for a production-ready implementation.</p>
-            <TerminalBlock 
-                language="python" 
-                filename="implementation.py" 
-                code={\`# PhD-level Implementation for ${modTitle}\\n# Module loaded successfully.\\n\\ndef run_${modTitle.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}():\\n    print("Executing core logic...")\\n\\nrun_${modTitle.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}()\`}
-            />
-        </div>
-
-        <InteractiveQuiz 
-            question="Which mathematical or architectural constraint best fits the application of ${modTitle}?"
-            options={[
-                "When minimizing variance is the absolute priority over bias.",
-                "When operating in a high-dimensional, non-linear geometric space.",
-                "It is strictly a heuristic without statistical grounding.",
-                "When data relies entirely on ordinal variables."
-            ]}
-            correctIndex={1}
-            explanation="Understanding the specific architectural tradeoffs and mathematical bounds is key to PhD-level AI engineering."
-        />
-      </section>
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+      <div className="w-16 h-16 bg-${color}-100 rounded-2xl flex items-center justify-center mb-6">
+        <svg className="w-8 h-8 text-${color}-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+      </div>
+      <h2 className="text-2xl font-bold text-slate-900 mb-2">Content In Progress</h2>
+      <p className="text-slate-500 max-w-md">This module is being written to Stanford lecture quality. Check back soon.</p>
     </div>
   );
 }
 `;
-}
 
-// Scaffold
+const baseDir = path.join(__dirname, 'src/app/course');
+let created = 0;
+let skipped = 0;
+
 for (const stack of curriculum) {
-    for (const mod of stack.modules) {
-        const modDir = path.join(baseDir, stack.id, mod.id);
-        fs.mkdirSync(modDir, { recursive: true });
-        
-        const pagePath = path.join(modDir, "page.tsx");
-        const content = generatePage(stack.title, stack.color, mod.title, mod.desc);
-        
-        fs.writeFileSync(pagePath, content, "utf8");
-    }
-}
+  for (const mod of stack.modules) {
+    const dir = path.join(baseDir, stack.id, mod.id);
+    const pagePath = path.join(dir, 'page.tsx');
 
-console.log("Scaffolded all PhD-level course pages successfully!");
+    // Only create if the file does NOT already exist (never overwrite real content)
+    if (!fs.existsSync(pagePath)) {
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(pagePath, COMING_SOON_TEMPLATE(stack.title, stack.color, mod.id), 'utf8');
+      console.log(`  Created: ${stack.id}/${mod.id}`);
+      created++;
+    } else {
+      console.log(`  Skipped (exists): ${stack.id}/${mod.id}`);
+      skipped++;
+    }
+  }
+}
+console.log(`\nDone. Created ${created} new pages, skipped ${skipped} existing pages.`);
