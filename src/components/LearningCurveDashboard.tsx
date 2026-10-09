@@ -103,7 +103,7 @@ export default function LearningCurveDashboard({
               <YAxis domain={[0, 100]} label={{ value: 'Accuracy (%)', angle: -90, position: 'insideLeft' }} />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
-                formatter={(value) => `${(value as number).toFixed(2)}%`}
+                formatter={(value: any) => `${Number(value).toFixed(2)}%`}
               />
               <Area 
                 type="monotone" 
