@@ -7,10 +7,13 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 interface TerminalBlockProps {
   language: string;
   filename?: string;
-  code: string;
+  code?: string;
+  children?: string;
 }
 
-export default function TerminalBlock({ language, filename, code }: TerminalBlockProps) {
+export default function TerminalBlock({ language, filename, code, children }: TerminalBlockProps) {
+  const content = code ?? (typeof children === 'string' ? children.trim() : '');
+
   return (
     <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 bg-[#1e1e1e] my-8 font-mono">
       <div className="bg-[#2d2d2d] px-4 py-3 flex items-center gap-2 border-b border-black/40">
@@ -29,7 +32,7 @@ export default function TerminalBlock({ language, filename, code }: TerminalBloc
         showLineNumbers 
         customStyle={{ margin: 0, padding: '1.5rem', background: 'transparent' }}
       >
-        {code}
+        {content}
       </SyntaxHighlighter>
     </div>
   );
