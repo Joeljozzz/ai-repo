@@ -1,225 +1,359 @@
 "use client";
 import React from "react";
 import TerminalBlock from "@/components/TerminalBlock";
+import MathBlock from "@/components/MathBlock";
+import ConceptCard from "@/components/ConceptCard";
+import ComparisonTable from "@/components/ComparisonTable";
+import AlgorithmBlock from "@/components/AlgorithmBlock";
 
-const code = `import numpy as np
+const attentionSuiteCode = `import numpy as np
+from typing import Tuple, Optional
+
+# ==============================================================================
+# 1. SCALED DOT-PRODUCT ATTENTION WITH CAUSAL MASKING
+# ==============================================================================
+
+def scaled_dot_product_attention(
+    Q: np.ndarray, 
+    K: np.ndarray, 
+    V: np.ndarray, 
+    mask: Optional[np.ndarray] = None
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Computes Scaled Dot-Product Attention:
+        Attention(Q, K, V) = Softmax( (Q · K^T) / sqrt(d_k) + M ) · V
+    
+    Shapes:
+        Q: (batch_size, num_heads, seq_len_q, d_k)
+        K: (batch_size, num_heads, seq_len_k, d_k)
+        V: (batch_size, num_heads, seq_len_k, d_v)
+        mask: (seq_len_q, seq_len_k) or broadcastable
+    """
+    d_k = Q.shape[-1]
+    
+    # 1. Compute raw pairwise compatibility scores: (Q · K^T) / sqrt(d_k)
+    scores = np.matmul(Q, K.swapaxes(-1, -2)) / np.sqrt(d_k)
+
+    # 2. Inject additive causal / padding mask
+    if mask is not None:
+        # Fill masked positions with -1e9 (approximating -infinity before exp)
+        scores = np.where(mask == 0, -1e9, scores)
+
+    # 3. Stable Softmax over the key dimension
+    shift_scores = scores - np.max(scores, axis=-1, keepdims=True)
+    exp_scores = np.exp(shift_scores)
+    attention_weights = exp_scores / np.sum(exp_scores, axis=-1, keepdims=True)
+
+    # 4. Multiply attention weights by values
+    context = np.matmul(attention_weights, V)
+    return context, attention_weights
+
+# ==============================================================================
+# 2. MULTI-HEAD ATTENTION (MHA) & GROUPED-QUERY ATTENTION (GQA)
+# ==============================================================================
 
 class MultiHeadAttention:
     """
-    Scaled Dot-Product and Multi-Head Attention as formulated in
-    'Attention Is All You Need' (Vaswani et al., 2017).
-    
-    Attention(Q, K, V) = softmax( (Q · K^T) / sqrt(d_k) + M ) · V
-    MultiHead(Q, K, V) = Concat(head_1, ..., head_h) · W_O
+    Production Multi-Head and Grouped-Query Attention (Vaswani 2017, Ainslie 2023).
+    Supports:
+    - Standard Multi-Head Attention (num_q_heads == num_kv_heads)
+    - Grouped-Query Attention (num_q_heads > num_kv_heads, e.g. LLaMA-3)
+    - Multi-Query Attention (num_kv_heads == 1)
     """
-    def __init__(self, d_model: int = 512, num_heads: int = 8):
-        assert d_model % num_heads == 0, "d_model must be divisible by num_heads"
+    def __init__(self, d_model: int = 512, num_q_heads: int = 8, num_kv_heads: int = 8):
+        assert d_model % num_q_heads == 0, "d_model must be divisible by num_q_heads"
+        assert num_q_heads % num_kv_heads == 0, "num_q_heads must be a multiple of num_kv_heads"
+        
         self.d_model = d_model
-        self.num_heads = num_heads
-        self.d_k = d_model // num_heads  # typically 64
+        self.num_q_heads = num_q_heads
+        self.num_kv_heads = num_kv_heads
+        self.num_groups = num_q_heads // num_kv_heads
+        self.d_k = d_model // num_q_heads
+        
+        # Projection weight matrices initialized with Xavier Normal
+        scale_q = np.sqrt(2.0 / (d_model + d_model))
+        scale_kv = np.sqrt(2.0 / (d_model + (self.num_kv_heads * self.d_k)))
+        
+        self.W_q = np.random.randn(d_model, d_model) * scale_q
+        self.W_k = np.random.randn(d_model, self.num_kv_heads * self.d_k) * scale_kv
+        self.W_v = np.random.randn(d_model, self.num_kv_heads * self.d_k) * scale_kv
+        self.W_o = np.random.randn(d_model, d_model) * scale_q
 
-        # Projection weight matrices
-        scale = np.sqrt(2.0 / d_model)
-        self.W_q = np.random.randn(d_model, d_model) * scale
-        self.W_k = np.random.randn(d_model, d_model) * scale
-        self.W_v = np.random.randn(d_model, d_model) * scale
-        self.W_o = np.random.randn(d_model, d_model) * scale
-
-    def scaled_dot_product_attention(self, Q: np.ndarray, K: np.ndarray, V: np.ndarray, mask: np.ndarray = None):
-        """
-        Q, K, V shapes: (batch_size, num_heads, seq_len, d_k)
-        """
-        # 1. Compute raw affinity energy scores: (Q · K^T) / sqrt(d_k)
-        scores = np.matmul(Q, K.swapaxes(-1, -2)) / np.sqrt(self.d_k)
-
-        # 2. Apply causal autoregressive mask if provided (e.g. Decoder masking)
-        if mask is not None:
-            # Mask out future positions with negative infinity
-            scores = np.where(mask == 0, -1e9, scores)
-
-        # 3. Apply Softmax along the last dimension (over keys)
-        exp_scores = np.exp(scores - np.max(scores, axis=-1, keepdims=True))
-        attention_weights = exp_scores / np.sum(exp_scores, axis=-1, keepdims=True)
-
-        # 4. Weighted combination of values
-        context = np.matmul(attention_weights, V)
-        return context, attention_weights
-
-    def forward(self, X: np.ndarray, mask: np.ndarray = None):
-        """
-        Input X shape: (batch_size, seq_len, d_model)
-        """
+    def forward(self, X: np.ndarray, is_causal: bool = True) -> Tuple[np.ndarray, np.ndarray]:
         batch_size, seq_len, _ = X.shape
+        
+        # 1. Project inputs
+        Q = np.dot(X, self.W_q)  # (B, S, d_model)
+        K = np.dot(X, self.W_k)  # (B, S, num_kv_heads * d_k)
+        V = np.dot(X, self.W_v)  # (B, S, num_kv_heads * d_k)
+        
+        # 2. Reshape into head dimensions
+        Q = Q.reshape(batch_size, seq_len, self.num_q_heads, self.d_k).swapaxes(1, 2)
+        K = K.reshape(batch_size, seq_len, self.num_kv_heads, self.d_k).swapaxes(1, 2)
+        V = V.reshape(batch_size, seq_len, self.num_kv_heads, self.d_k).swapaxes(1, 2)
+        
+        # 3. For GQA / MQA: repeat KV heads to match Q heads
+        if self.num_groups > 1:
+            K = np.repeat(K, self.num_groups, axis=1)
+            V = np.repeat(V, self.num_groups, axis=1)
 
-        # Linear projections
-        Q = np.dot(X, self.W_q)  # (batch, seq, d_model)
-        K = np.dot(X, self.W_k)
-        V = np.dot(X, self.W_v)
+        # 4. Construct causal autoregressive mask (lower triangular)
+        mask = None
+        if is_causal:
+            mask = np.tril(np.ones((seq_len, seq_len)))
 
-        # Reshape and transpose into multi-head format: (batch, num_heads, seq_len, d_k)
-        Q = Q.reshape(batch_size, seq_len, self.num_heads, self.d_k).swapaxes(1, 2)
-        K = K.reshape(batch_size, seq_len, self.num_heads, self.d_k).swapaxes(1, 2)
-        V = V.reshape(batch_size, seq_len, self.num_heads, self.d_k).swapaxes(1, 2)
+        # 5. Execute Scaled Dot-Product Attention across all heads in parallel
+        context, attn_weights = scaled_dot_product_attention(Q, K, V, mask=mask)
 
-        # Scaled dot-product attention per head
-        context, attn_weights = self.scaled_dot_product_attention(Q, K, V, mask)
-
-        # Concatenate heads back: (batch, seq_len, d_model)
+        # 6. Concatenate heads and project output: (B, num_heads, S, d_k) -> (B, S, d_model)
         context = context.swapaxes(1, 2).reshape(batch_size, seq_len, self.d_model)
-
-        # Final linear output projection
         output = np.dot(context, self.W_o)
+        
         return output, attn_weights
 
+# ==============================================================================
+# VERIFICATION & NUMERICAL RUN
+# ==============================================================================
 if __name__ == "__main__":
-    # Test on a sequence of 6 tokens with d_model=64 and 4 heads
-    batch_size, seq_len, d_model = 2, 6, 64
-    x_tokens = np.random.randn(batch_size, seq_len, d_model)
+    np.random.seed(42)
+    B, S, D = 2, 4, 128
+    dummy_input = np.random.randn(B, S, D)
 
-    mha = MultiHeadAttention(d_model=d_model, num_heads=4)
-    out, weights = mha.forward(x_tokens)
+    # 1. Standard Multi-Head Attention (MHA: 8 Q-heads, 8 KV-heads)
+    mha = MultiHeadAttention(d_model=D, num_q_heads=8, num_kv_heads=8)
+    out_mha, weights_mha = mha.forward(dummy_input, is_causal=True)
+    print("MHA Output Shape:", out_mha.shape)
+    print("MHA Causal Attention Upper Triangle (Tokens cannot look ahead):\\n", 
+          np.round(weights_mha[0, 0], 3))
 
-    print(f"Input sequence tensor: {x_tokens.shape}")
-    print(f"Output contextualized: {out.shape}   [Expected: (2, 6, 64)]")
-    print(f"Attention map weights: {weights.shape} [Expected: (2, 4, 6, 6)]")
+    # 2. Grouped-Query Attention (GQA: 8 Q-heads, 2 KV-heads - LLaMA-3 Style)
+    gqa = MultiHeadAttention(d_model=D, num_q_heads=8, num_kv_heads=2)
+    out_gqa, _ = gqa.forward(dummy_input, is_causal=True)
+    print("\\nGQA Output Shape:", out_gqa.shape)
+    print("KV Cache Memory Reduction Factor:", 8 // 2, "x bandwidth savings")
 `;
 
 export default function AttentionPage() {
   return (
     <article className="prose prose-slate max-w-none pb-24">
-      <div className="not-prose mb-8">
-        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-bold uppercase tracking-widest">
-          <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+      {/* ── Track Badge ── */}
+      <div className="not-prose mb-4">
+        <span className="inline-block rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-purple-700">
           Track 2 · Deep Learning
         </span>
       </div>
 
-      <h1>Attention Mechanisms: Bahdanau Alignment, Scaled Dot-Product, and Multi-Head Attention</h1>
+      <h1>Attention Mechanisms: Bahdanau, Scaled Dot-Product, Multi-Head, and Grouped-Query Attention (GQA)</h1>
 
-      <blockquote>
-        <p>
-          <em>"The fundamental bottleneck of sequence-to-sequence networks was compressing an arbitrary length input sequence into a single static context vector. Attention replaces this bottleneck with dynamic, data-dependent memory retrieval."</em> — Dzmitry Bahdanau, Kyunghyun Cho, &amp; Yoshua Bengio (2014)
-        </p>
-      </blockquote>
+      <p className="lead text-lg text-slate-700">
+        Before attention mechanisms, sequence transduction relied on Recurrent Neural Networks (RNNs and LSTMs) that compressed
+        arbitrary-length sequential contexts into a single fixed-dimensional hidden state vector. This information bottleneck
+        prevented models from capturing long-range dependencies. Attention replaced this static compression with dynamic,
+        content-based routing. This lecture covers the mathematical evolution of attention: from Bahdanau additive alignment to
+        Vaswani scaled dot-product attention, the analytical proof for variance scaling by <span className="font-mono text-sm">1/√d_k</span>,
+        Multi-Head Attention (MHA), and modern memory-efficient Grouped-Query Attention (GQA).
+      </p>
 
+      {/* ── Learning Objectives ── */}
       <h2>Learning Objectives</h2>
       <ul>
-        <li>Understand the theoretical progression from additive attention (Bahdanau) to multiplicative attention (Luong).</li>
-        <li>Derive the Scaled Dot-Product Attention equation and prove why the <code>1 / √d_k</code> normalization factor is necessary.</li>
-        <li>Explain the Query, Key, and Value database retrieval metaphor in high-dimensional vector spaces.</li>
-        <li>Analyze Multi-Head Attention as parallel subspace projections and derive total computational complexity.</li>
-        <li>Implement vectorized Multi-Head Attention from scratch in NumPy with causal autoregressive masking.</li>
+        <li>
+          Understand the Seq2Seq information bottleneck problem and how Bahdanau (2014) additive attention solved it.
+        </li>
+        <li>
+          Derive the Scaled Dot-Product Attention equation and prove mathematically why dividing by <span className="font-mono text-sm">√d_k</span> is necessary to prevent Softmax gradient saturation.
+        </li>
+        <li>
+          Analyze Multi-Head Attention (MHA) and explain why multiple attention heads capture distinct linguistic subspaces (syntactic, positional, coreference).
+        </li>
+        <li>
+          Evaluate the memory-bandwidth bottleneck of autoregressive inference and contrast MHA, Multi-Query Attention (MQA), and Grouped-Query Attention (GQA).
+        </li>
+        <li>
+          Formulate causal autoregressive masking and implement an end-to-end vectorized MHA/GQA module from scratch in NumPy.
+        </li>
       </ul>
 
-      <h2>1 · The Information Bottleneck of Seq2Seq Models</h2>
+      {/* ══════════════════════════════════════════════
+          Section 1 · The Seq2Seq Bottleneck & Bahdanau
+      ══════════════════════════════════════════════ */}
+      <h2>1 · The Seq2Seq Bottleneck &amp; The Origin of Attention</h2>
       <p>
-        In classical Recurrent Neural Network encoder-decoder architectures (Sutskever et al., Cho et al.), the encoder compressed a source sequence <code>(x_1, ..., x_T)</code> into a single fixed-length vector <code>h_T</code>.
-      </p>
-      <p>
-        For sentences longer than 20 words, performance deteriorated rapidly due to the <strong>information bottleneck</strong> and gradient decay over long temporal chains.
-      </p>
-      <p>
-        <strong>Bahdanau Additive Attention (2014):</strong> Enabled the decoder at step <code>t</code> to selectively look back across <em>all</em> encoder hidden states <code>(h_1, ..., h_T)</code> by computing learned alignment scores:
-      </p>
-
-      <div className="not-prose bg-slate-900 rounded-xl p-5 font-mono text-slate-100 text-sm my-6">
-        <p className="text-slate-400">// Bahdanau Additive Energy Score:</p>
-        <p>e_ti = v_a^T · tanh( W_a · s_(t-1) + U_a · h_i )</p>
-        <br />
-        <p className="text-slate-400">// Luong Multiplicative Dot-Product Score (1915):</p>
-        <p>e_ti = s_t^T · W_a · h_i</p>
-      </div>
-
-      <h2>2 · Query, Key, and Value Vector Formulation</h2>
-      <p>
-        Vaswani et al. (2017) formalized attention as a differentiable database lookup:
-      </p>
-      <ul>
-        <li><strong>Query (Q):</strong> What the current token is seeking (search prompt).</li>
-        <li><strong>Key (K):</strong> What each candidate token offers (database indexing tags).</li>
-        <li><strong>Value (V):</strong> The actual information payload transferred if a match occurs.</li>
-      </ul>
-
-      <div className="not-prose bg-slate-900 rounded-xl p-5 font-mono text-slate-100 text-sm my-6">
-        <p>Attention(Q, K, V) = Softmax( (Q · K^T) / √d_k ) · V</p>
-      </div>
-
-      <h3>Why Divide by √d_k? (Variance Preservation)</h3>
-      <p>
-        Assume the components of <code>q</code> and <code>k</code> are independent random variables with zero mean and unit variance <code>Var(q_i) = Var(k_i) = 1</code>. The dot product is:
+        In traditional Encoder-Decoder architectures (Sutskever et al., 2014), the encoder compresses an entire sequence
+        <span className="font-mono text-sm">x = (x_1, x_2, ..., x_T)</span> into a single context vector <span className="font-mono text-sm">c = h_T</span>.
+        For sentences exceeding 20–30 tokens, BLEU scores degraded drastically as the vector ran out of bits to encode nuanced semantic syntax.
       </p>
 
-      <div className="not-prose bg-slate-900 rounded-xl p-5 font-mono text-slate-100 text-sm my-6">
-        <p>q · k = Σ_(i=1)^(d_k) q_i · k_i</p>
-        <p>E[ q · k ] = Σ E[q_i] · E[k_i] = 0</p>
-        <p>Var( q · k ) = Σ Var(q_i · k_i) = Σ [ Var(q_i) · Var(k_i) ] = d_k</p>
-      </div>
+      <MathBlock
+        title="Bahdanau Additive Attention Formulation (Bahdanau et al., 2014)"
+        steps={[
+          {
+            label: "Alignment Score",
+            formula: "e_ij = v_a^T · tanh(W_a · s_(i-1) + U_a · h_j)",
+            annotation: "Single hidden-layer feedforward network scoring compatibility between decoder state s_(i-1) and encoder annotation h_j.",
+          },
+          {
+            label: "Attention Weights",
+            formula: "α_ij = exp(e_ij) / (∑_(k=1)^T exp(e_ik))",
+            annotation: "Normalized distribution representing the degree to which output token i attends to input token j.",
+          },
+          {
+            label: "Dynamic Context Vector",
+            formula: "c_i = ∑_(j=1)^T α_ij · h_j",
+            annotation: "Time-varying weighted sum of all encoder hidden states.",
+          },
+        ]}
+        result="Information Bottleneck Destroyed: The decoder directly queries the exact encoder states relevant to the current prediction"
+        resultNote="Luong et al. (2015) subsequently introduced multiplicative dot-product attention: e_ij = s_i^T h_j, paving the way for matrix multiplication acceleration on GPUs."
+      />
 
+      {/* ══════════════════════════════════════════════
+          Section 2 · Scaled Dot-Product Attention & Proof
+      ══════════════════════════════════════════════ */}
+      <h2>2 · Scaled Dot-Product Attention &amp; The Variance Scaling Proof</h2>
       <p>
-        For large projection dimensions (e.g., <code>d_k = 64</code> or <code>128</code>), the variance of <code>Q · K^T</code> grows to <code>d_k</code>, producing large dot products. Passing large magnitudes into the Softmax function pushes activations into regions with vanishingly small derivatives (saturation), choking gradient flow during backpropagation.
-      </p>
-      <p>
-        Dividing by <strong><code>√d_k</code></strong> scales the variance back down to exactly 1.0, preserving gradient stability.
-      </p>
-
-      <h2>3 · Multi-Head Attention Theory</h2>
-      <p>
-        A single attention head tends to average information across tokens. <strong>Multi-Head Attention</strong> projects queries, keys, and values <code>h</code> times with independently learned linear projection matrices:
+        In &ldquo;Attention Is All You Need&rdquo; (Vaswani et al., 2017), the authors replaced recurrence entirely with
+        <strong>Scaled Dot-Product Attention</strong> operating across three matrix projections: Queries (<span className="font-mono text-sm">Q</span>),
+        Keys (<span className="font-mono text-sm">K</span>), and Values (<span className="font-mono text-sm">V</span>).
       </p>
 
       <div className="not-prose bg-slate-900 rounded-xl p-5 font-mono text-slate-100 text-sm my-6">
-        <p>MultiHead(Q, K, V) = Concat( head_1, ..., head_h ) · W_O</p>
-        <p>where head_i = Attention( Q · W_i^Q,  K · W_i^K,  V · W_i^V )</p>
-        <br />
-        <p>W_i^Q ∈ ℝ^(d_model × d_k),   W_i^K ∈ ℝ^(d_model × d_k),   W_i^V ∈ ℝ^(d_model × d_v),   W_O ∈ ℝ^(h·d_v × d_model)</p>
+        <p className="text-amber-400 font-bold mb-2">// The Canonical Equation</p>
+        <p className="text-base text-emerald-300">Attention(Q, K, V) = Softmax( (Q · K^T) / √d_k + M ) · V</p>
+        <p className="mt-3 text-slate-400">// Where:</p>
+        <p>  Q ∈ ℝ^(n × d_k)    — Queries representing what tokens are searching for</p>
+        <p>  K ∈ ℝ^(m × d_k)    — Keys representing what tokens have to offer</p>
+        <p>  V ∈ ℝ^(m × d_v)    — Values containing the actual contextual content</p>
+        <p>  M ∈ ℝ^(n × m)      — Additive attention mask (e.g. -∞ for causal future positions)</p>
       </div>
 
+      <ConceptCard variant="theorem" title="Proof: Why Must We Divide by √d_k?">
+        <p>
+          Assume the components of query vector <span className="font-mono text-xs">q</span> and key vector <span className="font-mono text-xs">k</span>{" "}
+          are independent random variables with zero mean and unit variance:
+        </p>
+        <p className="font-mono text-xs bg-purple-100/60 p-2 rounded">
+          𝔼[q_i] = 0,   Var(q_i) = 1,   𝔼[k_i] = 0,   Var(k_i) = 1
+        </p>
+        <p>
+          Their dot product is the sum of <span className="font-mono text-xs">d_k</span> independent products:{" "}
+          <span className="font-mono text-xs">q · k = ∑_(i=1)^(d_k) q_i k_i</span>.
+        </p>
+        <ul className="list-disc pl-5 space-y-1 text-xs">
+          <li><strong>Expected Value:</strong> <span className="font-mono">𝔼[q · k] = ∑ 𝔼[q_i] · 𝔼[k_i] = 0</span>.</li>
+          <li><strong>Variance:</strong> <span className="font-mono">Var(q · k) = ∑ Var(q_i k_i) = ∑ [Var(q_i)Var(k_i) + Var(q_i)(𝔼[k_i])² + Var(k_i)(𝔼[q_i])²] = ∑ (1 · 1) = d_k</span>.</li>
+        </ul>
+        <p className="mt-2">
+          Therefore, the standard deviation of the raw dot product is <span className="font-mono text-xs">σ = √d_k</span>.
+          For large <span className="font-mono text-xs">d_k</span> (e.g. <span className="font-mono text-xs">d_k = 64</span> or <span className="font-mono text-xs">128</span>),
+          dot products frequently reach values &gt; 30.
+        </p>
+        <p className="font-mono text-xs bg-red-100/60 p-2 rounded text-red-900 mt-2">
+          When logits z into Softmax are large, Softmax saturates: S_i ≈ 1 and S_j ≈ 0.
+          As proven in Section 2 of Neural Networks, the Softmax gradient is S_i(1 - S_i) ≈ 0,
+          causing catastrophic vanishing gradients during backpropagation!
+        </p>
+        <p className="mt-2">
+          Dividing by <span className="font-mono text-xs">√d_k</span> scales the variance back to strictly <span className="font-mono text-xs">Var = 1</span>,
+          ensuring smooth gradients across all sequence lengths.
+        </p>
+      </ConceptCard>
+
+      {/* ══════════════════════════════════════════════
+          Section 3 · Multi-Head Attention (MHA)
+      ══════════════════════════════════════════════ */}
+      <h2>3 · Multi-Head Attention: Attending to Multiple Subspaces</h2>
       <p>
-        This enables the model to simultaneously attend to information from different representation subspaces at different positions (e.g., Head 1 tracks grammatical subject-verb agreement, Head 2 resolves pronoun coreference, Head 3 tracks local punctuation boundaries).
+        Rather than performing a single attention function with <span className="font-mono text-sm">d_model</span>-dimensional keys,
+        queries, and values, Multi-Head Attention projects them <span className="font-mono text-sm">h</span> times with distinct,
+        learnable linear projections.
       </p>
 
-      <h2>4 · Computational Complexity: Attention vs. Convolution vs. Recurrence</h2>
-      <div className="not-prose overflow-x-auto my-6">
-        <table className="min-w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
-          <thead className="bg-slate-100 text-slate-700 font-semibold">
-            <tr>
-              <th className="px-4 py-3 text-left">Layer Type</th>
-              <th className="px-4 py-3 text-left">Complexity Per Layer</th>
-              <th className="px-4 py-3 text-left">Sequential Operations</th>
-              <th className="px-4 py-3 text-left">Maximum Path Length</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            <tr className="bg-white">
-              <td className="px-4 py-3 font-semibold">Self-Attention</td>
-              <td className="px-4 py-3 font-mono">O(n² · d)</td>
-              <td className="px-4 py-3 font-mono">O(1) [Fully Parallel]</td>
-              <td className="px-4 py-3 font-mono">O(1)</td>
-            </tr>
-            <tr className="bg-slate-50">
-              <td className="px-4 py-3 font-semibold">Recurrent (RNN)</td>
-              <td className="px-4 py-3 font-mono">O(n · d²)</td>
-              <td className="px-4 py-3 font-mono">O(n) [Non-parallelizable]</td>
-              <td className="px-4 py-3 font-mono">O(n)</td>
-            </tr>
-            <tr className="bg-white">
-              <td className="px-4 py-3 font-semibold">Convolutional</td>
-              <td className="px-4 py-3 font-mono">O(k · n · d²)</td>
-              <td className="px-4 py-3 font-mono">O(1)</td>
-              <td className="px-4 py-3 font-mono">O(log_k(n))</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <MathBlock
+        title="Multi-Head Attention Formulation"
+        steps={[
+          {
+            label: "Head Projection",
+            formula: "head_i = Attention( Q · W_i^Q,   K · W_i^K,   V · W_i^V )",
+            annotation: "Where W_i^Q ∈ ℝ^(d_model × d_k), W_i^K ∈ ℝ^(d_model × d_k), W_i^V ∈ ℝ^(d_model × d_v).",
+          },
+          {
+            label: "Concatenation & Output",
+            formula: "MultiHead(Q, K, V) = Concat(head_1, head_2, ..., head_h) · W^O",
+            annotation: "Output projection W^O ∈ ℝ^(h·d_v × d_model). Typically d_k = d_v = d_model / h.",
+          },
+        ]}
+        result="Dimensional Equivalence: Total computational cost is identical to single-head attention with full dimensionality"
+        resultNote="Multiple heads permit the network to jointly attend to information from different representation subspaces (e.g., Head 1: syntactic structure; Head 2: pronoun coreference; Head 3: positional proximity)."
+      />
 
-      <h2>5 · Python Implementation from First Principles</h2>
-      <TerminalBlock language="python" filename="multihead_attention.py" code={code} />
+      {/* ══════════════════════════════════════════════
+          Section 4 · GQA, MQA, and Inference Bottlenecks
+      ══════════════════════════════════════════════ */}
+      <h2>4 · The Inference Memory Wall: MHA vs MQA vs GQA</h2>
+      <p>
+        During autoregressive LLM inference, previously generated Key and Value vectors must be cached in GPU High Bandwidth
+        Memory (HBM) to avoid recomputing past tokens (&ldquo;KV Cache&rdquo;).
+        For long context windows (e.g., 32k - 128k tokens), the KV Cache memory footprint dominates GPU VRAM, saturating memory bandwidth.
+      </p>
 
-      <h2>6 · Further Reading</h2>
-      <ul>
-        <li>Vaswani, A., et al. (2017). <em>Attention Is All You Need</em>. Advances in Neural Information Processing Systems (NeurIPS 30).</li>
-        <li>Bahdanau, D., Cho, K., &amp; Bengio, Y. (2015). <em>Neural Machine Translation by Jointly Learning to Align and Translate</em>. ICLR 2015.</li>
-        <li>Luong, M. T., Pham, H., &amp; Manning, C. D. (2015). <em>Effective Approaches to Attention-based Neural Machine Translation</em>. EMNLP 2015.</li>
+      <ComparisonTable
+        title="Attention Architectures: Memory Bandwidth & Quality Tradeoffs"
+        subtitle="Comparing Multi-Head, Multi-Query, and Grouped-Query Attention."
+        columns={[
+          { key: "type", header: "Architecture", width: "20%" },
+          { key: "kvHeads", header: "KV Heads relative to Q", width: "25%" },
+          { key: "kvCacheSize", header: "KV-Cache Memory Footprint", width: "25%" },
+          { key: "models", header: "Prominent Models", width: "30%" },
+        ]}
+        data={[
+          {
+            type: <strong className="text-slate-900">Multi-Head (MHA)</strong>,
+            kvHeads: "num_kv_heads == num_q_heads (1:1 ratio)",
+            kvCacheSize: "Baseline (100% memory)",
+            models: "Original Transformer, GPT-3, LLaMA-1",
+          },
+          {
+            type: <strong className="text-slate-900">Multi-Query (MQA)</strong>,
+            kvHeads: "num_kv_heads == 1 (all Q share 1 KV)",
+            kvCacheSize: <span className="text-emerald-700 font-semibold">Reduced by h (e.g. 1/32 ≈ 3.1%)</span>,
+            models: "PaLM, StarCoder, Falcon",
+          },
+          {
+            type: <strong className="text-slate-900">Grouped-Query (GQA)</strong>,
+            kvHeads: "1 < num_kv_heads < num_q_heads (e.g. 8:1)",
+            kvCacheSize: <span className="text-emerald-700 font-semibold">Reduced by 4x - 8x with zero quality loss</span>,
+            models: "LLaMA-2-70B, LLaMA-3, Mistral 7B, Gemma",
+          },
+        ]}
+      />
+
+      {/* ══════════════════════════════════════════════
+          Section 5 · Python Implementation
+      ══════════════════════════════════════════════ */}
+      <h2>5 · Complete Vectorized Multi-Head &amp; GQA Implementation</h2>
+      <p>
+        Below is a complete implementation supporting both standard Multi-Head Attention and Grouped-Query Attention with
+        causal masking and parallel head computation.
+      </p>
+
+      <TerminalBlock language="python" filename="attention_mechanisms.py" code={attentionSuiteCode} />
+
+      {/* ── References ── */}
+      <h2>6 · Academic References</h2>
+      <ul className="text-sm space-y-2">
+        <li>
+          <strong>Vaswani, A., et al. (2017)</strong>. <em>Attention Is All You Need</em>. NeurIPS 2017.
+        </li>
+        <li>
+          <strong>Bahdanau, D., Cho, K., &amp; Bengio, Y. (2014)</strong>. <em>Neural machine translation by jointly learning to align and translate</em>. ICLR 2015.
+        </li>
+        <li>
+          <strong>Ainslie, J., et al. (2023)</strong>. <em>GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints</em>. EMNLP 2023.
+        </li>
+        <li>
+          <strong>Dao, T., et al. (2022)</strong>. <em>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness</em>. NeurIPS 2022.
+        </li>
       </ul>
     </article>
   );
