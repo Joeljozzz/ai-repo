@@ -59,12 +59,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               
               <nav className="py-4 px-3 space-y-6 flex-1">
                 {curriculum.map((stack) => {
-                  const Icon = (LucideIcons as any)[stack.icon] || LucideIcons.BookOpen;
+                  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[stack.icon] || LucideIcons.BookOpen;
                   const c = colorMap[stack.color] || colorMap.sky;
                   return (
                     <div key={stack.id}>
                       <div className="flex items-center gap-2 px-2 mb-2">
-                        <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`}></span>
+                        <Icon className={`w-3.5 h-3.5 ${c.text}`} />
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stack.label} · {stack.title}</span>
                       </div>
                       <div className={`ml-3 pl-4 border-l ${c.border} space-y-0.5`}>

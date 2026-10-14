@@ -4,7 +4,6 @@ import TerminalBlock from "@/components/TerminalBlock";
 import MathBlock from "@/components/MathBlock";
 import ConceptCard from "@/components/ConceptCard";
 import ComparisonTable from "@/components/ComparisonTable";
-import AlgorithmBlock from "@/components/AlgorithmBlock";
 
 const ragPipelineCode = `import numpy as np
 import re

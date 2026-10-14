@@ -13,14 +13,20 @@ interface LearningCurveProps {
   initialLoss?: number;
 }
 
+interface CurvePoint {
+  epoch: number;
+  trainLoss: number;
+  valLoss: number;
+  accuracy: number;
+}
+
 export default function LearningCurveDashboard({ 
   title, 
   description, 
   epochs = 50,
   initialLoss = 2.5
 }: LearningCurveProps) {
-  const [data, setData] = useState<any[]>([]);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [data, setData] = useState<CurvePoint[]>([]);
 
   // Generate realistic learning curves
   useEffect(() => {
@@ -103,7 +109,7 @@ export default function LearningCurveDashboard({
               <YAxis domain={[0, 100]} label={{ value: 'Accuracy (%)', angle: -90, position: 'insideLeft' }} />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
-                formatter={(value: any) => `${Number(value).toFixed(2)}%`}
+                formatter={(value: unknown) => `${Number(value).toFixed(2)}%`}
               />
               <Area 
                 type="monotone" 

@@ -4,7 +4,6 @@ import TerminalBlock from "@/components/TerminalBlock";
 import MathBlock from "@/components/MathBlock";
 import ConceptCard from "@/components/ConceptCard";
 import ComparisonTable from "@/components/ComparisonTable";
-import AlgorithmBlock from "@/components/AlgorithmBlock";
 
 const transformerEngineCode = `import numpy as np
 from typing import Tuple, Optional
