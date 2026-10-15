@@ -107,6 +107,33 @@ export default function Home() {
         ))}
       </section>
 
+      {/* ── Featured Showcase: ML For Beginners ── */}
+      <section className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-emerald-50 to-blue-50 p-6 md:p-8 shadow-sm ring-1 ring-amber-100">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 border border-amber-300 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-amber-900">
+              🎓 New Track · 12 Weeks · 26 Lessons · 52 Quizzes
+            </div>
+            <h2 className="text-2xl font-black text-slate-900 md:text-3xl">
+              Machine Learning for Beginners — Web Masterclass
+            </h2>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Explore the complete Microsoft classic ML curriculum brought to life as an interactive web experience.
+              Test yourself with 52 pre/post quizzes, explore pumpkin regressions, cuisine classifiers, Nigerian Spotify clustering, hotel reviews NLP, and Q-learning.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/course/ml-beginners"
+              className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-amber-600 shadow-sm"
+            >
+              Launch 12-Week Hub
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section id="curriculum" className="space-y-5">
         <div className="flex items-end justify-between gap-4">
           <div>

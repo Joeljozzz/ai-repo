@@ -148,6 +148,24 @@ Every topic is engineered from first principles:
 | **Multi-Agent Swarms** | Supervisor pattern, peer-to-peer swarms, hierarchical teams | AutoGen conversation orchestrators, consensus routing |
 | **Production Agents** | Guardrails, rate limiting, deterministic fallbacks, evals | Sandboxed code interpreters, latency optimization, observability |
 
+### Track 7: Machine Learning for Beginners — 12-Week Masterclass (`/course/ml-beginners`)
+*Converted from Microsoft's 12-week, 26-lesson, 52-quiz curriculum into a full interactive web experience.*
+
+| Week | Focus Area | Lessons Included | Interactive Quizzes |
+| :--- | :--- | :--- | :--- |
+| **Week 1** | **Introduction & History** | 01. Intro to ML · 02. History of ML | Quizzes #1, #2, #3, #4 |
+| **Week 2** | **Fairness & ML Techniques** | 03. Fairness in ML · 04. Techniques of ML | Quizzes #5, #6, #7, #8 |
+| **Week 3** | **Tools & Data Preparation** | 05. Tools of the Trade · 06. Data Prep & EDA | Quizzes #9, #10, #11, #12 |
+| **Week 4** | **Linear & Logistic Regression** | 07. Linear & Polynomial · 08. Logistic Regression | Quizzes #13, #14, #15, #16 |
+| **Week 5** | **Web App Deployment** | 09. Web App Deployment with Flask & ONNX | Quizzes #17, #18 |
+| **Week 6** | **Classification Part 1** | 10. Intro to Classification · 11. Linear SVC & K-NN | Quizzes #19, #20, #21, #22 |
+| **Week 7** | **Classification Part 2 & Diagnostics** | 12. Decision Trees & Ensembles · 13. Diagnostics & ROC | Quizzes #23, #24, #25, #26 |
+| **Week 8** | **Clustering & K-Means** | 14. Clustering Intro · 15. K-Means in Practice | Quizzes #27, #28, #29, #30 |
+| **Week 9** | **NLP Foundations & Tasks** | 16. Intro to NLP · 17. POS Tagging, NER & TF-IDF | Quizzes #31, #32, #33, #34 |
+| **Week 10** | **Sentiment Analysis & Hotel Reviews** | 18. VADER Sentiment · 19. Reviews NLP 1 · 20. Reviews NLP 2 | Quizzes #35, #36, #37, #38, #39, #40 |
+| **Week 11** | **Time Series & ARIMA Forecasting** | 21. Time Series Intro · 22. ARIMA & SARIMAX · 23. SVR | Quizzes #41, #42, #43, #44, #51, #52 |
+| **Week 12** | **Reinforcement Learning & Real-World ML** | 24. Q-Learning · 25. Gym CartPole · 26. Real-World Debugging | Quizzes #45, #46, #47, #48, #49, #50 |
+
 ---
 
 ## 💻 Interactive Learning Features
@@ -158,6 +176,7 @@ ai-repo/src/components/
 ├── ComparisonTable.tsx        # High-density feature & complexity matrix
 ├── ConceptCard.tsx            # First-principles conceptual takeaways
 ├── InteractiveQuiz.tsx        # Self-assessment module quizzes with immediate feedback
+├── InteractiveQuizSuite.tsx   # 52-Quiz engine with question steppers, scorecards & persistence
 ├── LearningCurveDashboard.tsx # Recharts-powered real-time loss & accuracy simulator
 ├── MathBlock.tsx              # LaTeX mathematical derivation containers
 └── TerminalBlock.tsx          # Multi-tab runnable code playground

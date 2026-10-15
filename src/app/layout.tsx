@@ -20,6 +20,7 @@ const colorMap: Record<string, { dot: string; text: string; border: string; hove
   indigo: { dot: "bg-indigo-400", text: "text-indigo-600", border: "border-indigo-200", hover: "hover:text-indigo-700", hoverBg: "hover:bg-indigo-50" },
   teal:   { dot: "bg-teal-400",   text: "text-teal-600",   border: "border-teal-200",   hover: "hover:text-teal-700",   hoverBg: "hover:bg-teal-50" },
   rose:   { dot: "bg-rose-400",   text: "text-rose-600",   border: "border-rose-200",   hover: "hover:text-rose-700",   hoverBg: "hover:bg-rose-50" },
+  amber:  { dot: "bg-amber-400",  text: "text-amber-600",  border: "border-amber-200",  hover: "hover:text-amber-700",  hoverBg: "hover:bg-amber-50" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -54,6 +55,31 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     <div className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">AI Engineer&apos;s Handbook</div>
                     <div className="text-[10px] text-slate-400 uppercase tracking-widest font-medium">Zero → Production AI</div>
                   </div>
+                </Link>
+              </div>
+
+              {/* Dedicated ML For Beginners Interactive Hub Callout */}
+              <div className="p-3 border-b border-slate-100 bg-gradient-to-br from-amber-50/70 via-emerald-50/50 to-blue-50/50">
+                <Link
+                  href="/course/ml-beginners"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-amber-200/80 shadow-sm hover:border-amber-400 hover:shadow-md transition group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500 text-white text-xs font-bold shadow-sm">
+                      🎓
+                    </span>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 group-hover:text-amber-700 transition">
+                        ML for Beginners
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-medium">
+                        12 Weeks · 52 Quizzes
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
+                    Hub
+                  </span>
                 </Link>
               </div>
               
